@@ -1,0 +1,50 @@
+{% extends 'master' %}
+
+{% block content %}
+
+    <div class="container">
+
+        <div class="block-header">
+            <h2>Module Configuration</h2>
+        </div>
+
+        <br>
+        <a class="btn-floating btn-large waves-effect waves-light green" id="add_module"><i class="material-icons">add</i></a>
+        <br>
+
+        <div id="module_placement_container">
+            {% for module in modules %}
+                <div class="module_placement">
+                    <div class="placement_item">
+                        <label>Module n°{{ loop.index }}</label>
+                        <div class="col s6">
+                            <select>
+                                <option value="" disabled selected>Choose your option</option>
+                                <option value="1">Option 1</option>
+                                <option value="2">Option 2</option>
+                                <option value="3">Option 3</option>
+                            </select>
+
+                        </div>
+                        <div class="col s6">
+                            <button class="btn-floating waves-effect waves-light red"><i class="material-icons">delete</i></button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block javascript %}
+<script>
+  $(document).ready(function() {
+    $('select').material_select();
+    $('add_module').click(function () {
+
+    })
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,42 @@
+nav{
+    margin-bottom: 1rem;
+}
+
+.block-header > h2 {
+    font-size: 15px;
+    color: #777;
+    margin: 0;
+    font-weight: 400;
+    text-transform: uppercase;
+}
+
+.placement_item{
+    padding: 10px;
+    border: solid 1px #e3e3e3;
+}
+
+.text-white{
+    color: #FFF;
+}
+
+.grid_module {
+    display: flex;
+}
+
+.module_block {
+    position: relative;
+    flex: 1;
+    width: 50%;
+    padding: 15px;
+    border: solid 1px #e3e3e3;
+}
+
+.full_module_link{
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+#notifications li a{
+    color: black;
+}

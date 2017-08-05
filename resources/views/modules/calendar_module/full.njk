@@ -1,0 +1,250 @@
+{% extends 'master' %}
+
+{% block style %}
+    <link href='//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.css' rel='stylesheet' />
+    <link href='//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.print.css' rel='stylesheet' media='print' />
+
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div id='calendar'></div>
+    </div>
+
+
+    <!-- Modale d'event-->
+    <div id="event_modal" class="modal">
+        <div class="modal-content">
+            <h4>Add Event</h4>
+
+            <div class="row">
+                <div class="input-field col-s6">
+                    <label for="title">Event's title</label>
+                    <input type="text" id="title" name="title">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="input-field col-s6">
+                    <label for="start">Event's start</label>
+                    <input type="text" id="start" name="start" readonly>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="input-field col-s6">
+                    <label for="end">Event's end</label>
+                    <input type="text" id="end" name="end" readonly>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a id="agree" class="waves-effect waves-green btn-flat blue text-white">Agree</a>
+            <a id="disagree" class="waves-effect waves-green btn-flat red text-white">Disagree</a>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascript %}
+
+  <script src='//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment-with-locales.min.js'></script>
+  <script src='//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js'></script>
+  <script>
+    moment.locale()
+    $(document).ready(function() {
+      var calendar = $('#calendar').fullCalendar({
+
+        header: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'month,agendaWeek,agendaDay'
+        },
+
+        height: window.outerHeight * 0.8,
+        editable: true,
+        selectable: true,
+        selectHelper: true,
+        editable: true,
+        eventLimit: true,
+        events: '/ajax/calendar_module',
+
+        select: function (start, end) {
+          var modal = $('#event_modal')
+
+          startText = $.fullCalendar.moment(start).format('YYYY-MM-DD HH:mm:ss');
+          endText = $.fullCalendar.moment(end).format('YYYY-MM-DD HH:mm:ss');
+
+          modal.find('#title').val('')
+          modal.find('#start').val(startText)
+          modal.find('#end').val(endText)
+          modal.find('h4').text('Add Event')
+          var del = modal.find('#disagree')
+          var update = modal.find('#agree')
+
+          del.text('Disagree')
+          update.text('Agree')
+
+          modal.modal('open')
+
+          //Si le bouton disagree est pressé on réinitialize la modal et on ferme
+          $('#disagree').click(function (e) {
+            e.preventDefault()
+            var title = modal.find('#title')
+            title.val('')
+            title.removeClass('invalid')
+            modal.modal('close')
+            $(this).unbind()
+            $('#agree').unbind()
+          })
+
+          //Si agree est pressé on valide les paramètre puis on envoie une requete AJAX afin de sauvegarder la creation en BDD
+          $('#agree').click(function (e) {
+            console.log('Create')
+            e.preventDefault()
+            var title = modal.find('#title')
+
+            if (title.val() == '') {
+              title.addClass('invalid')
+            } else {
+
+              var event = {
+                _csrf: '{{ csrfToken }}',
+                title: title.val(),
+                start: startText,
+                end: endText
+              }
+
+              $.ajax({
+                type: 'POST',
+                url: '/ajax/calendar_module/create',
+                data: event,
+                success: function (data) {
+                  calendar.fullCalendar('renderEvent', {
+                    id: data,
+                    title: title.val(),
+                    start: start,
+                    end: end
+                  }, true)
+
+                }
+              })
+              modal.modal('close')
+              calendar.fullCalendar('unselect')
+              $('#disagree').unbind()
+              $(this).unbind()
+            }
+          });
+        },
+        eventClick: function (calEvent) {
+          var modal = $('#event_modal')
+          var title = modal.find('#title')
+          var start = modal.find('#start')
+          var end = modal.find('#end')
+          var del = modal.find('#disagree')
+          var update = modal.find('#agree')
+
+          title.val(calEvent.title)
+          start.val(calEvent.start)
+          end.val(calEvent.end)
+          del.text('Delete')
+          update.text('Update')
+
+          modal.find('h4').text('Update Event')
+          modal.modal('open')
+
+          update.click(function (e) {
+            e.preventDefault()
+
+            startText = $.fullCalendar.moment(calEvent.start).format('YYYY-MM-DD HH:mm:ss');
+            endText = $.fullCalendar.moment(calEvent.end).format('YYYY-MM-DD HH:mm:ss');
+
+            if (title.val() == '') {
+              title.addClass('invalid')
+            } else {
+
+              var event = {
+                _csrf: '{{ csrfToken }}',
+                id: calEvent.id,
+                title: title.val(),
+                start: startText,
+                end: endText
+              }
+
+              $.ajax({
+                type: 'POST',
+                url: '/ajax/calendar_module/update',
+                data: event
+              })
+
+              modal.modal('close')
+              calEvent.title = title.val()
+              calendar.fullCalendar('updateEvents', calEvent)
+              calendar.fullCalendar('unselect')
+              $('#disagree').unbind()
+              $(this).unbind()
+            }
+          })
+
+          del.click(function (e) {
+            e.preventDefault()
+            var event = {
+              _csrf: '{{ csrfToken }}',
+              id: calEvent.id
+            }
+
+            $.ajax({
+              type: 'POST',
+              url: '/ajax/calendar_module/delete',
+              data: event
+            })
+
+            modal.modal('close')
+            calendar.fullCalendar('removeEvents', calEvent.id)
+            calendar.fullCalendar('unselect')
+            $(this).unbind()
+            $('#agree').unbind()
+          })
+
+        },
+        eventDrop: function (calEvent, delta) {
+          startText = $.fullCalendar.moment(calEvent.start).format('YYYY-MM-DD HH:mm:ss');
+          endText = $.fullCalendar.moment(calEvent.end).format('YYYY-MM-DD HH:mm:ss');
+
+          var ev = {
+            _csrf: '{{ csrfToken }}',
+            id: calEvent.id,
+            title: calEvent.title,
+            start: startText,
+            end: endText
+          }
+
+          $.ajax({
+            url: '/ajax/calendar_module/update',
+            data: ev,
+            type: "POST"
+          })
+        },
+        editable: true,
+        eventResize: function (calEvent) {
+
+          startText = $.fullCalendar.moment(calEvent.start).format('YYYY-MM-DD HH:mm:ss');
+          endText = $.fullCalendar.moment(calEvent.end).format('YYYY-MM-DD HH:mm:ss');
+
+          var ev = {
+            _csrf: '{{ csrfToken }}',
+            id: calEvent.id,
+            title: calEvent.title,
+            start: startText,
+            end: endText
+          }
+          $.ajax({
+            url: '/ajax/calendar_module/update',
+            data: ev,
+            type: "POST"
+          })
+        }
+      })
+    })
+  </script>
+{% endblock %}

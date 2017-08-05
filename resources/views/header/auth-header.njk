@@ -1,0 +1,26 @@
+<header>
+    <nav>
+        <div class="nav-wrapper light-blue darken-3">
+                <ul>
+                    <li><a href="#" data-activates="sidebar" class="button-sidebar"><i class="material-icons">menu</i></a></li>
+                    <li><a href="/"><i class="material-icons">home</i></li></a>
+                </ul>
+                <ul class="right">
+
+                    <li><a id='notifications-dropdown' data-beloworigin="true" href='#' data-activates='notifications'><i class="material-icons">
+                                {% if notifications|length > 0 %}
+                                    notifications_active
+                                {% else %}
+                                    notifications_none
+                                {% endif %}
+                            </i></a></li>
+                    <li><a href="/logout"><i class="material-icons">input</i></a></li>
+                </ul>
+        </div>
+    </nav>
+    <ul class="side-nav" id="sidebar">
+    {%  for module in modules %}
+           <li><a href="{{module.link}}"><i class="material-icons">{{module.icon}}</i>{{module.name}}</a></li>
+    {% endfor %}
+    </ul>
+</header>

@@ -1,0 +1,20 @@
+<script src='//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment-with-locales.min.js'></script>
+<script src='//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js'></script>
+<script>
+  moment.locale()
+  $(document).ready(function() {
+    var calendar = $('#calendar').fullCalendar({
+
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: ''
+      },
+      defaultView: 'basicDay',
+      selectable: true,
+      selectHelper: true,
+      eventLimit: true,
+      events: '/ajax/calendar_module'
+    })
+  })
+</script>

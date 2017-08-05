@@ -1,0 +1,25 @@
+{% extends 'master' %}
+
+{% block style %}
+    {%  for module in modules %}
+        {% include module.view + '/preview/preview-style' %}
+    {% endfor %}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="module_grid">
+            {%  for module in modules %}
+                <div class="module_block">
+                    {% include module.view + '/preview/preview' %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {%  for module in modules %}
+        {% include module.view + '/preview/preview-javascript' %}
+    {% endfor %}
+{% endblock %}

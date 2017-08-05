@@ -1,0 +1,5 @@
+<ul id='notifications' class='dropdown-content'>
+    {%  for notification in notifications %}
+        <li><a href="/notification/{{ notification.id }}"><i class="material-icons">{{notification.icon}}</i>{{ notification.content }}</a></li>
+    {% endfor %}
+</ul>

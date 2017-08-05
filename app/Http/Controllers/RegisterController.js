@@ -15,7 +15,13 @@ class RegisterController {
     const validation = yield Validator.validate(userData, User.rules)
 
     if (validation.fails()) {
-      response.json(validation.messages())
+      var message = validation.messages()
+      yield request
+        .with({type: 'error',
+          messages: message[0].message
+        })
+        .flash()
+      response.redirect('/register')
       return
     }else
     {

@@ -31,7 +31,8 @@ const providers = [
   'adonis-auth/providers/AuthManagerProvider',
   'adonis-websocket/providers/WsProvider',
   'adonis-scheduler/providers/SchedulerProvider',
-  'adonis-recaptcha/providers/RecaptchaProvider'
+  'adonis-recaptcha/providers/RecaptchaProvider',
+  'adonis-validation-provider/providers/ValidatorProvider'
 ]
 
 /*
@@ -81,7 +82,8 @@ const aliases = {
   View: 'Adonis/Src/View',
   Ws: 'Adonis/Addons/Ws',
   Scheduler: 'Adonis/Addons/Scheduler',
-  Recaptcha: 'Adonis/Addons/Recaptcha'
+  Recaptcha: 'Adonis/Addons/Recaptcha',
+  Validator: 'Adonis/Addons/Validator'
 }
 
 /*

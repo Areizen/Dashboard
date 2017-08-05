@@ -52,7 +52,7 @@ class CalendarModuleController {
   }
 
   * update (request, response) {
-    let calendar = yield CalendarModule.findBy('id', request.input('id')).wh
+    let calendar = yield CalendarModule.findBy('id', request.input('id'))
     if (calendar.user_id === request.currentUser.id) {
       calendar.title = request.input('title')
       calendar.start = request.input('start')

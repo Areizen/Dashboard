@@ -55,7 +55,15 @@ class User extends Lucid {
   }
 
   calendarModule () {
-    return this.hasOne('App/Model/CalendarModule')
+    return this.hasMany('App/Model/CalendarModule').where('user_id', '=', this.id)
+  }
+
+  static get rules () {
+    return {
+      username: 'required|unique:users',
+      email: 'required|email|unique:users',
+      password: 'required'
+    }
   }
 
 }
